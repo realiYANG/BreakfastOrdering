@@ -34,6 +34,10 @@
             width: 100%;
             max-width: 500px;
         }
+        #copyButton {
+            margin-top: 10px;
+            padding: 5px 10px;
+        }
     </style>
 </head>
 <body>
@@ -42,6 +46,7 @@
         <!-- 菜单项将通过JavaScript动态生成 -->
     </div>
     <button onclick="generateOrder()">生成订单</button>
+    <button id="copyButton" onclick="copyToClipboard()">复制订单</button>
     <div id="output"></div>
     
     <script src="script.js"></script>
