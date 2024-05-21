@@ -1,5 +1,3 @@
-// script.js
-
 const menuItems = [
     { name: "白糖馒头", price: 1 },
     { name: "椒盐花卷", price: 1.5 },
@@ -73,4 +71,15 @@ function generateOrder() {
 
     orderText += `总价为${totalPrice.toFixed(2)}元`;
     outputDiv.textContent = orderText;
+}
+
+function copyToClipboard() {
+    const outputDiv = document.getElementById('output');
+    const textToCopy = outputDiv.textContent;
+    
+    navigator.clipboard.writeText(textToCopy).then(function() {
+        alert('订单已复制到剪切板');
+    }, function(err) {
+        console.error('复制失败', err);
+    });
 }
