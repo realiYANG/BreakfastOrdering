@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>早餐点餐程序</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+        .menu-item {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+        }
+        .menu-item label {
+            margin-right: 10px;
+        }
+        .menu-item input[type="number"] {
+            width: 50px;
+            margin-left: 10px;
+        }
+        .menu-item input[type="number"]:not(:checked) {
+            display: none;
+        }
+        #output {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            width: 100%;
+            max-width: 500px;
+        }
+    </style>
+</head>
+<body>
+    <h1>早餐点餐程序</h1>
+    <div id="menu">
+        <!-- 菜单项将通过JavaScript动态生成 -->
+    </div>
+    <button onclick="generateOrder()">生成订单</button>
+    <div id="output"></div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
