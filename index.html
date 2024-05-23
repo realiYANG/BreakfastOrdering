@@ -3,52 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>早餐点餐程序</title>
+    <title>早餐价格计算器</title>
     <style>
         body {
-            font-family: 'Microsoft YaHei', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 20px;
+            font-family: '微软雅黑', sans-serif;
+            padding: 20px;
         }
-        .menu-item {
+        .item {
             display: flex;
             align-items: center;
-            margin: 5px 0;
+            margin-bottom: 10px;
         }
-        .menu-item label {
-            margin-right: 10px;
+        .item label {
+            flex: 1;
         }
-        .menu-item input[type="number"] {
-            width: 50px;
-            margin-left: 10px;
-        }
-        .menu-item input[type="number"]:not(:checked) {
+        .hidden {
             display: none;
         }
-        #output {
+        .results {
             margin-top: 20px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            width: 100%;
-            max-width: 500px;
         }
-        #copyButton {
-            margin-top: 10px;
-            padding: 5px 10px;
+        .small-text {
+            font-size: 12px;
+            color: grey;
         }
     </style>
 </head>
 <body>
-    <h1>早餐点餐程序</h1>
-    <div id="menu">
-        <!-- 菜单项将通过JavaScript动态生成 -->
+    <h1>早餐价格计算器</h1>
+    <div id="items">
+        <!-- Breakfast items will be injected here by JavaScript -->
     </div>
-    <button onclick="generateOrder()">生成订单</button>
-    <button id="copyButton" onclick="copyToClipboard()">复制订单</button>
-    <div id="output"></div>
-    
-    <script src="script.js"></script>
+    <button onclick="calculateTotal()">计算总价</button>
+    <div class="results">
+        <textarea id="orderText" rows="3" cols="50" readonly></textarea>
+        <button onclick="copyToClipboard('orderText')">复制订单</button>
+    </div>
+    <div class="results">
+        <textarea id="totalText" rows="1" cols="50" readonly></textarea>
+        <button onclick="copyToClipboard('totalText')">复制总价</button>
+    </div>
+    <div class="small-text">复制功能仅在浏览器打开情况下可用。</div>
+
+    <script>
+        const breakfastItems = [
+            {name: '白糖馒头', price: 1},
+            {name: '椒盐花卷', price: 1.5},
+            {name: '红枣红糖馒头', price: 1.5},
+            {name: '花生芝麻糖包', price: 1.5},
+            {name: '白菜素包子', price: 1.5},
+            {name: '香辣芽菜包', price: 1.5},
+            {name: '酸菜粉丝包', price: 1.5},
+            {name: '酱肉大包', price: 2},
+            {name: '鲜肉大包', price: 2},
+            {name: '红豆卷', price: 2},
+            {name: '奶香玉米', price: 2},
+            {name: '椰奶包', price: 2},
+            {name: '绿豆/桂花米糕', price: 2},
+            {name: '红糖/紫薯米糕', price: 2},
+            {name: '玉米蒸饺', price: [1, 4]}, // special case
+            {name: '烧麦', price: 1.5},
+            {name: '稀饭', price: 2},
+            {name: '现磨豆浆', price: 2},
+            {name: '五香卤鸡蛋', price: 2},
+        ];
+
+        function createItemElement(item) {
+            const div = document.createElement('div');
+            div.classList.add('item');
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = item.name;
+            checkbox.onchange = () => toggleQuantityInput(item.name);
+
+            const label = document.createElement('label');
+            label.htmlFor = item.name;
+            label.textContent = `${item.name} - ${Array.isArray(item.price) ? `${item.price[0]}元1个 ${item.price[1]}元5个` : `${item.price}元`}`;
+
+            const quantityInput = document.createElement('input');
+            quantityInput.type = 'number';
+            quantityInput.id = `${item.name}-quantity`;
+            quantityInput.min = 1;
+            quantityInput.value = 1;
+            quantityInput.classList.add('hidden');
+
+            div.appendChild(checkbox);
+            div.appendChild(label);
+            div.appendChild(quantityInput);
+            return div;
+        }
+
+        function toggleQuantityInput(itemName) {
+            const quantityInput = document.getElementById(`${itemName}-quantity`);
+            quantityInput.classList.toggle('hidden');
+        }
+
+        function calculateTotal() {
+            let orderText = '';
+            let totalText = '';
+            let totalPrice = 0;
+
+            breakfastItems.forEach(item => {
+                const checkbox = document.getElementById(item.name);
+                if (checkbox.checked) {
+                    const quantity = document.getElementById(`${item.name}-quantity`).value;
+                    let itemTotalPrice;
+                    if (Array.isArray(item.price)) {
+                        itemTotalPrice = quantity >= 5 ? Math.floor(quantity / 5) * item.price[1] + (quantity % 5) * item.price[0] : quantity * item.price[0];
+                    } else {
+                        itemTotalPrice = quantity * item.price;
+                    }
+                    orderText += `${item.name}${quantity}个 `;
+                    totalPrice += itemTotalPrice;
+                }
+            });
+
+            totalText = `总价为${totalPrice}元`;
+
+            document.getElementById('orderText').value = orderText.trim();
+            document.getElementById('totalText').value = totalText;
+        }
+
+        function copyToClipboard(elementId) {
+            const copyText = document.getElementById(elementId);
+            copyText.select();
+            copyText.setSelectionRange(0, 99999);
+            document.execCommand("copy");
+            alert("已复制: " + copyText.value);
+        }
+
+        window.onload = () => {
+            const itemsContainer = document.getElementById('items');
+            breakfastItems.forEach(item => {
+                const itemElement = createItemElement(item);
+                itemsContainer.appendChild(itemElement);
+            });
+        }
+    </script>
 </body>
 </html>
