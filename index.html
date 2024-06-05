@@ -41,7 +41,7 @@
     </div>
     <div class="results">
         <textarea id="totalText" rows="1" cols="50" readonly></textarea>
-        <button onclick="copyToClipboard('totalText')">复制价格</button>
+        <button onclick="copyToClipboard('totalText')">复制全部</button>
     </div>
     <div class="small-text">Good morning</div>
 
@@ -52,7 +52,6 @@
             {name: '红枣红糖馒头', price: 1.5},
             {name: '花生芝麻糖包', price: 1.5},
             {name: '白菜素包子', price: 1.5},
-            {name: '香辣芽菜包', price: 1.5},
             {name: '酸菜粉丝包', price: 1.5},
             {name: '酱肉大包', price: 2},
             {name: '鲜肉大包', price: 2},
@@ -119,7 +118,7 @@
                 }
             });
 
-            totalText = `总价为${totalPrice}元`;
+            totalText = orderText + ` 总价为${totalPrice}元`;
 
             document.getElementById('orderText').value = orderText.trim();
             document.getElementById('totalText').value = totalText;
